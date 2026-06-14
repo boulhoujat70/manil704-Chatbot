@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Assistant Manil704</title>
+
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="Assistant Manil704 - Chatbot personnalisé avec Mistral AI." />
+
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192x192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(236, 72, 153, 0.18), transparent 34%),
+        radial-gradient(circle at bottom, rgba(37, 99, 235, 0.16), transparent 34%),
+        #f3f4f6;
+      color: #111827;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .chatbox {
+      width: min(440px, 100%);
+      height: 650px;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.22);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #111827, #1f2937);
+      color: white;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .logo-mini {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 14px rgba(236, 72, 153, 0.75);
+      flex: 0 0 auto;
+    }
+
+    .title-area {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .title-area strong {
+      font-size: 18px;
+      white-space: nowrap;
+    }
+
+    .title-area span {
+      font-size: 13px;
+      color: #fcd34d;
+      white-space: nowrap;
+    }
+
+    .title-area span.connected {
+      color: #bbf7d0;
+    }
+
+    .small-btn {
+      background: rgba(255, 255, 255, 0.14);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .install-btn {
+      display: none;
+      margin: 0 12px 12px;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      background: linear-gradient(135deg, #ec4899, #2563eb);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background:
+        linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+        url("logo.png") center 55% / 280px no-repeat;
+    }
+
+    .message {
+      padding: 12px 14px;
+      border-radius: 16px;
+      line-height: 1.45;
+      max-width: 84%;
+      white-space: pre-wrap;
+      font-size: 15px;
+    }
+
+    .user {
+      background: #dbeafe;
+      align-self: flex-end;
+      border-bottom-right-radius: 5px;
+    }
+
+    .bot {
+      background: #f1f5f9;
+      align-self: flex-start;
+      border-bottom-left-radius: 5px;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid #e5e7eb;
+      background: #ffffff;
+    }
+
+    .input-area input {
+      flex: 1;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
+      outline: none;
+      min-width: 0;
+    }
+
+    .input-area input:focus {
+      border-color: #111827;
+    }
+
+    .input-area button {
+      border: none;
+      border-radius: 12px;
+      padding: 0 16px;
+      background: #111827;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .api-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.74);
+      display: none;
+      place-items: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+
+    .api-modal.active {
+      display: grid;
+    }
+
+    .api-card {
+      width: min(430px, 100%);
+      background: white;
+      padding: 24px;
+      border-radius: 22px;
+      box-shadow: 0 22px 60px rgba(0, 0, 0, 0.30);
+      text-align: center;
+    }
+
+    .logo-large {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #111827;
+      box-shadow: 0 0 22px rgba(236, 72, 153, 0.65);
+      margin-bottom: 12px;
+    }
+
+    .api-card h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+    }
+
+    .api-card p {
+      color: #4b5563;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    .api-card input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 13px;
+      font-size: 15px;
+      margin: 8px 0 12px;
+      outline: none;
+    }
+
+    .api-card input:focus {
+      border-color: #111827;
+    }
+
+    .api-card button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 13px;
+      background: #111827;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .api-card small {
+      display: block;
+      margin-top: 12px;
+      color: #6b7280;
+      line-height: 1.4;
+      text-align: left;
+    }
+
+    @media (max-width: 520px) {
+      .chatbox {
+        height: calc(100vh - 28px);
+      }
+
+      .header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .small-btn {
+        width: 100%;
+      }
+
+      .messages {
+        background:
+          linear-gradient(rgba(255,255,255,0.94), rgba(255,255,255,0.94)),
+          url("logo.png") center 55% / 230px no-repeat;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="api-modal" id="apiModal">
+    <div class="api-card">
+      <img src="logo.png" alt="Logo Manil704" class="logo-large" />
+
+      <h1>Connexion Mistral</h1>
+      <p>Entrez votre clé API Mistral pour démarrer le chatbot.</p>
+
+      <input
+        type="password"
+        id="apiKeyInput"
+        placeholder="Collez votre clé API Mistral ici"
+        autocomplete="off"
+      />
+
+      <button id="saveApiKeyButton" type="button">Se connecter</button>
+
+      <small>
+        La clé est gardée uniquement dans cette session du navigateur.
+        Elle disparaît quand vous fermez l’onglet.
+      </small>
+    </div>
+  </div>
+
+  <main class="page">
+    <section class="chatbox">
+      <div class="header">
+        <div class="header-left">
+          <img src="logo.png" alt="Logo Manil704" class="logo-mini" />
+
+          <div class="title-area">
+            <strong>Assistant Manil704</strong>
+            <span id="status">Clé API requise</span>
+          </div>
+        </div>
+
+        <button class="small-btn" id="changeKeyButton" type="button">
+          Changer la clé
+        </button>
+      </div>
+
+      <button class="install-btn" id="installButton" type="button">
+        Installer l’application
+      </button>
+
+      <div class="messages" id="messages">
+        <div class="message bot">
+          Bonjour 👋 Entrez votre clé API Mistral pour commencer.
+        </div>
+      </div>
+
+      <form class="input-area" id="chatForm">
+        <input id="messageInput" placeholder="Écrivez votre message..." autocomplete="off" />
+        <button id="sendButton" type="submit">Envoyer</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const MISTRAL_URL = "https://api.mistral.ai/v1/chat/completions";
+    const MISTRAL_MODEL = "mistral-small-latest";
+
+    const apiModal = document.getElementById("apiModal");
+    const apiKeyInput = document.getElementById("apiKeyInput");
+    const saveApiKeyButton = document.getElementById("saveApiKeyButton");
+    const changeKeyButton = document.getElementById("changeKeyButton");
+    const statusText = document.getElementById("status");
+
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("messageInput");
+    const messages = document.getElementById("messages");
+    const sendButton = document.getElementById("sendButton");
+    const installButton = document.getElementById("installButton");
+
+    let apiKey = sessionStorage.getItem("MISTRAL_API_KEY") || "";
+    let deferredPrompt = null;
+
+    const conversation = [
+      {
+        role: "system",
+        content:
+          "Tu es Assistant Manil704, un chatbot professionnel. Tu réponds toujours en français, avec des phrases simples, claires et utiles. Tu aides l'utilisateur à obtenir une réponse ou à préparer une demande de devis. Si une information manque, pose une question courte."
+      }
+    ];
+
+    function showApiModal() {
+      apiModal.classList.add("active");
+      setTimeout(() => apiKeyInput.focus(), 50);
+    }
+
+    function hideApiModal() {
+      apiModal.classList.remove("active");
+    }
+
+    function updateStatus() {
+      if (apiKey) {
+        statusText.textContent = "Connecté à Mistral";
+        statusText.classList.add("connected");
+      } else {
+        statusText.textContent = "Clé API requise";
+        statusText.classList.remove("connected");
+      }
+    }
+
+    function addMessage(text, type) {
+      const div = document.createElement("div");
+      div.className = "message " + type;
+      div.textContent = text;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+      return div;
+    }
+
+    function saveApiKey() {
+      const key = apiKeyInput.value.trim();
+
+      if (!key) {
+        alert("Veuillez entrer votre clé API Mistral.");
+        return;
+      }
+
+      apiKey = key;
+      sessionStorage.setItem("MISTRAL_API_KEY", apiKey);
+      apiKeyInput.value = "";
+      updateStatus();
+      hideApiModal();
+
+      addMessage("Clé API connectée ✅ Vous pouvez maintenant discuter avec le chatbot.", "bot");
+      input.focus();
+    }
+
+    saveApiKeyButton.addEventListener("click", saveApiKey);
+
+    apiKeyInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        saveApiKey();
+      }
+    });
+
+    changeKeyButton.addEventListener("click", () => {
+      sessionStorage.removeItem("MISTRAL_API_KEY");
+      apiKey = "";
+      updateStatus();
+      showApiModal();
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const text = input.value.trim();
+      if (!text) return;
+
+      if (!apiKey) {
+        showApiModal();
+        return;
+      }
+
+      addMessage(text, "user");
+      input.value = "";
+      sendButton.disabled = true;
+
+      const loading = addMessage("Réponse en cours...", "bot");
+
+      conversation.push({
+        role: "user",
+        content: text
+      });
+
+      try {
+        const response = await fetch(MISTRAL_URL, {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + apiKey,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: MISTRAL_MODEL,
+            messages: conversation,
+            temperature: 0.4,
+            max_tokens: 700
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          const errorMessage =
+            data?.message ||
+            data?.error?.message ||
+            "Erreur API Mistral. Vérifiez votre clé API.";
+
+          loading.textContent = errorMessage;
+          return;
+        }
+
+        const answer =
+          data?.choices?.[0]?.message?.content ||
+          "Je n’ai pas pu générer de réponse.";
+
+        loading.textContent = answer;
+
+        conversation.push({
+          role: "assistant",
+          content: answer
+        });
+
+      } catch (error) {
+        loading.textContent =
+          "Impossible de contacter Mistral depuis le navigateur. Pour un site public, il faudra passer par un petit serveur sécurisé.";
+      } finally {
+        sendButton.disabled = false;
+        input.focus();
+      }
+    });
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      deferredPrompt = event;
+      installButton.style.display = "block";
+    });
+
+    installButton.addEventListener("click", async () => {
+      if (!deferredPrompt) return;
+
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installButton.style.display = "none";
+    });
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js");
+      });
+    }
+
+    updateStatus();
+
+    if (!apiKey) {
+      showApiModal();
+    } else {
+      hideApiModal();
+      addMessage("Clé API déjà connectée pour cette session ✅", "bot");
+    }
+  </script>
+</body>
+</html>
