@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chatbot Mistral</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="chatbox">
+      <div class="header">
+        <div>
+          <strong>💬 Assistant</strong>
+          <span>En ligne</span>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="message bot">
+          Bonjour 👋 Besoin d’un renseignement ou d’un devis ? Décrivez votre demande ici, je vous guide rapidement.
+        </div>
+      </div>
+
+      <form class="input-area" id="chatForm">
+        <input id="messageInput" placeholder="Écrivez votre message..." autocomplete="off" />
+        <button id="sendButton" type="submit">Envoyer</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

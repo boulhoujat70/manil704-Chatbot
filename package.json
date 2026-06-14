@@ -1,23 +1,12 @@
 {
-  "name": "chatbot-mistral-github",
+  "name": "chatbot-mistral-final-github",
   "version": "1.0.0",
-  "description": "Chatbot personnalisé avec Mistral AI, Node.js et interface web.",
+  "description": "Chatbot personnalisé avec Mistral AI.",
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
-  "keywords": [
-    "chatbot",
-    "mistral",
-    "mistral-ai",
-    "nodejs",
-    "express",
-    "assistant"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
