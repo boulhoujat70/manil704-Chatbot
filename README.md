@@ -1,19 +1,26 @@
-# Chatbot Mistral
+# Chatbot Mistral avec demande de clé API au démarrage
 
-Le fichier `index.html` est à la racine du projet, donc GitHub Pages doit afficher le chatbot.
+Cette version est prévue pour GitHub Pages.
 
-Attention : GitHub Pages affiche le HTML/CSS/JS, mais ne lance pas le serveur Node.js.
-Pour connecter Mistral, il faut héberger `server.js` sur Render, Railway, Vercel ou un VPS.
+Le chatbot demande la clé API Mistral au démarrage, puis utilise cette clé pour envoyer les messages à Mistral.
 
-## Lancer en local
+## Fichiers
 
-```bash
-npm install
-npm start
-```
+- `index.html`
+- `style.css`
+- `script.js`
+- `README.md`
 
-Puis ouvrir :
+## Installation GitHub Pages
 
-```text
-http://localhost:3000
-```
+Envoyez ces fichiers à la racine du dépôt GitHub.
+
+Dans GitHub :
+
+Settings → Pages → Deploy from a branch → main → root
+
+## Important
+
+Cette version est pratique pour un test personnel.
+
+Pour un vrai site public, il est préférable d’utiliser un serveur backend afin de ne jamais exposer la clé API côté navigateur.
